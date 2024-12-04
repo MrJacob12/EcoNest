@@ -1,54 +1,69 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import EcosystemActions from "@/components/ecosystemdetail/EcosystemActions";
 import EcosystemHeader from "@/components/ecosystemdetail/EcosystemHeader";
 import EcosystemStatistics from "@/components/ecosystemdetail/EcosystemStatistics";
 import EcosystemHistoryCharts from "@/components/ecosystemdetail/EcosystemHistoryCharts";
-import EcosystemActions from "@/components/ecosystemdetail/EcosystemActions";
-
-// Ecosystem data interface
-interface Ecosystem {
-  id: string;
-  name: string;
-  type: string;
-  volume: string;
-  lastChecked: string;
-  history?: {
-    date: string;
-    temperature: number;
-    humidity: number;
-    ph?: number;
-  }[];
-}
-
-const mockHistory = [
-  { date: "2024-01", temperature: 23, humidity: 75, ph: 6.8 },
-  { date: "2024-02", temperature: 24, humidity: 78, ph: 6.9 },
-  { date: "2024-03", temperature: 22, humidity: 72, ph: 6.7 },
-];
+import {
+  AquariumStats,
+  TerrariumStats,
+  EcosystemStats,
+  EcosystemHistory,
+} from "@/types"; // Importujemy nasze interfejsy
 
 const EcosystemDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [ecosystem, setEcosystem] = useState<Ecosystem | null>(null);
+  const [ecosystem, setEcosystem] = useState<any | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedEcosystem, setEditedEcosystem] = useState<Ecosystem | null>(
-    null
-  );
+  const [editedEcosystem, setEditedEcosystem] = useState<any | null>(null);
+  const [ecosystemStats, setEcosystemStats] = useState<EcosystemStats>({
+    volume: "10",
+    temperature: "23",
+    lastChecked: "2024-01-01",
+    ammonia: "0.5",
+    nitrate: "10",
+    nitrite: "0.1",
+    hardness: "8",
+    co2: "10",
+    humidity: "65",
+    light: "1000",
+    soilMoisture: "50",
+  });
 
   useEffect(() => {
     const savedEcosystems = localStorage.getItem("ecosystems");
     if (savedEcosystems) {
-      const ecosystems: Ecosystem[] = JSON.parse(savedEcosystems);
+      const ecosystems = JSON.parse(savedEcosystems);
       const found = ecosystems.find((eco) => eco.id === id);
       if (found) {
-        const ecosystemWithHistory = {
-          ...found,
-          history: found.history || mockHistory,
-        };
-        setEcosystem(ecosystemWithHistory);
-        setEditedEcosystem(ecosystemWithHistory);
+        setEcosystem(found);
+        setEditedEcosystem(found);
+
+        if (found.type === "Aquarium") {
+          setEcosystemStats({
+            volume: found.volume,
+            temperature: "23",
+            lastChecked: found.lastChecked,
+            ammonia: "0.5",
+            nitrate: "10",
+            nitrite: "0.1",
+            hardness: "8",
+            co2: "10",
+            humidity: "65",
+          });
+        } else if (found.type === "Terrarium") {
+          setEcosystemStats({
+            volume: found.volume,
+            temperature: "23",
+            lastChecked: found.lastChecked,
+            humidity: "60",
+            light: "1000",
+            soilMoisture: "45",
+          });
+        }
       } else {
         toast({
           title: "Error",
@@ -63,14 +78,29 @@ const EcosystemDetail = () => {
   const handleSave = () => {
     if (!editedEcosystem) return;
 
+    const updatedStats = {
+      ...ecosystemStats,
+      lastChecked: new Date().toLocaleString(),
+    };
+    const updatedHistory: EcosystemHistory = {
+      date: new Date().toLocaleString(),
+      stats: updatedStats,
+    };
+
+    const updatedEcosystem = {
+      ...editedEcosystem,
+      history: [...editedEcosystem.history, updatedHistory],
+    };
+
     const savedEcosystems = localStorage.getItem("ecosystems");
     if (savedEcosystems) {
-      const ecosystems: Ecosystem[] = JSON.parse(savedEcosystems);
+      const ecosystems = JSON.parse(savedEcosystems);
       const updatedEcosystems = ecosystems.map((eco) =>
-        eco.id === id ? editedEcosystem : eco
+        eco.id === id ? updatedEcosystem : eco
       );
       localStorage.setItem("ecosystems", JSON.stringify(updatedEcosystems));
-      setEcosystem(editedEcosystem);
+      setEcosystem(updatedEcosystem);
+      setEditedEcosystem(updatedEcosystem);
       setIsEditing(false);
       toast({
         title: "Success",
@@ -79,14 +109,20 @@ const EcosystemDetail = () => {
     }
   };
 
+  const handleStatChange = (key: string, value: string) => {
+    setEcosystemStats((prevStats) => ({
+      ...prevStats,
+      [key]: value,
+    }));
+  };
+
   if (!ecosystem || !editedEcosystem) {
-    return null; // Optionally add a loading spinner or message while waiting for data
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary/30 to-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Ecosystem Actions (Back and Edit/Save Button) */}
         <EcosystemActions
           isEditing={isEditing}
           onEditSaveToggle={() => {
@@ -97,8 +133,6 @@ const EcosystemDetail = () => {
             }
           }}
         />
-
-        {/* Ecosystem Header */}
         <EcosystemHeader
           name={ecosystem.name}
           type={ecosystem.type}
@@ -110,15 +144,22 @@ const EcosystemDetail = () => {
             setEditedEcosystem({ ...editedEcosystem, type })
           }
         />
-
-        {/* Ecosystem Statistics */}
         <EcosystemStatistics
-          volume={ecosystem.volume}
-          temperature="23°C" // This could be dynamic based on ecosystem data
-          lastChecked={ecosystem.lastChecked}
+          volume={ecosystemStats.volume}
+          temperature={ecosystemStats.temperature}
+          lastChecked={ecosystemStats.lastChecked}
+          ammonia={ecosystemStats.ammonia}
+          nitrate={ecosystemStats.nitrate}
+          nitrite={ecosystemStats.nitrite}
+          hardness={ecosystemStats.hardness}
+          co2={ecosystemStats.co2}
+          humidity={ecosystemStats.humidity}
+          light={ecosystemStats.light}
+          soilMoisture={ecosystemStats.soilMoisture}
+          onStatChange={handleStatChange}
+          isEditing={isEditing}
         />
 
-        {/* Ecosystem History Charts */}
         {/* <EcosystemHistoryCharts
           history={ecosystem.history}
           type={ecosystem.type}
