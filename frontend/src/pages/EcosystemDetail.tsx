@@ -10,7 +10,7 @@ import {
   TerrariumStats,
   EcosystemStats,
   EcosystemHistory,
-} from "@/types"; // Importujemy nasze interfejsy
+} from "@/types";
 
 const EcosystemDetail = () => {
   const { id } = useParams();
