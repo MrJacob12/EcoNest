@@ -61,7 +61,7 @@ export const NewEcosystemDialog = ({
       id: crypto.randomUUID(),
       name: newEcosystem.name,
       type: newEcosystem.type,
-      volume: `${newEcosystem.volume}L`,
+      volume: `${newEcosystem.volume}`,
       lastChecked: new Date().toLocaleDateString(),
     };
 
