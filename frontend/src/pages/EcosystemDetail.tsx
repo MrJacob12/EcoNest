@@ -82,14 +82,19 @@ const EcosystemDetail = () => {
       ...ecosystemStats,
       lastChecked: new Date().toLocaleString(),
     };
+
     const updatedHistory: EcosystemHistory = {
       date: new Date().toLocaleString(),
       stats: updatedStats,
     };
 
+    const ecosystemHistory = Array.isArray(editedEcosystem.history)
+      ? editedEcosystem.history
+      : [];
+
     const updatedEcosystem = {
       ...editedEcosystem,
-      history: [...editedEcosystem.history, updatedHistory],
+      history: [...ecosystemHistory, updatedHistory],
     };
 
     const savedEcosystems = localStorage.getItem("ecosystems");
