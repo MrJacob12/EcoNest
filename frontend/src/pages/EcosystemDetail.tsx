@@ -45,23 +45,23 @@ const EcosystemDetail = () => {
         if (found.type === "Aquarium") {
           setEcosystemStats({
             volume: found.volume,
-            temperature: "23",
+            temperature: found.temperature,
             lastChecked: found.lastChecked,
-            ammonia: "0.5",
-            nitrate: "10",
-            nitrite: "0.1",
-            hardness: "8",
-            co2: "10",
-            humidity: "65",
+            ammonia: found.ammonia,
+            nitrate: found.nitrate,
+            nitrite: found.nitrite,
+            hardness: found.hardness,
+            co2: found.co2,
+            humidity: found.humidity,
           });
         } else if (found.type === "Terrarium") {
           setEcosystemStats({
             volume: found.volume,
-            temperature: "23",
+            temperature: found.temperature,
             lastChecked: found.lastChecked,
-            humidity: "60",
-            light: "1000",
-            soilMoisture: "45",
+            humidity: found.humidity,
+            light: found.light,
+            soilMoisture: found.soilMoisture,
           });
         }
       } else {
