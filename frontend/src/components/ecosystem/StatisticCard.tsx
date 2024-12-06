@@ -25,7 +25,7 @@ export const StatisticCard = ({
       {isEditing ? (
         <>
           <Label className="text-primary-dark font-semibold mb-2">
-            {title}
+            {title} {suffix}
           </Label>
           <Input
             type="text"
