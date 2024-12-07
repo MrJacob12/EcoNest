@@ -18,14 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { AddEcosystemButton } from "@/components/AddEcosystemButton"; // Reusing your custom button
-
-interface Ecosystem {
-  id: string;
-  name: string;
-  type: string;
-  volume: string;
-  lastChecked: string;
-}
+import { Ecosystem } from "@/types";
 
 interface NewEcosystemDialogProps {
   onAddEcosystem: (ecosystem: Ecosystem) => void;
@@ -103,22 +96,19 @@ export const NewEcosystemDialog = ({
             <Label htmlFor="type">Type</Label>
             <Select
               value={newEcosystem.type}
-              onValueChange={(value) =>
-                setNewEcosystem({ ...newEcosystem, type: value })
-              }
+              onValueChange={(value) => {
+                setNewEcosystem({ ...newEcosystem, type: value });
+              }}
             >
               <SelectTrigger className="bg-background">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent className="bg-background">
-                <SelectItem value="Closed Terrarium">
-                  Closed Terrarium
-                </SelectItem>
-                <SelectItem value="Open Terrarium">Open Terrarium</SelectItem>
+                <SelectItem value="Terrarium">Terrarium</SelectItem>
                 <SelectItem value="Aquarium">Aquarium</SelectItem>
-                <SelectItem value="Paludarium">Paludarium</SelectItem>
               </SelectContent>
             </Select>
+
           </div>
           <div className="grid gap-2">
             <Label htmlFor="volume">Volume (L)</Label>

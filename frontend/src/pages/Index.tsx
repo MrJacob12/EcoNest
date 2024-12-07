@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 import { EcosystemCard } from "@/components/EcosystemCard";
 import { NewEcosystemDialog } from "@/components/ecosystem/NewEcosystemDialog";
-
-interface Ecosystem {
-  id: string;
-  name: string;
-  type: string;
-  volume: string;
-  lastChecked: string;
-}
+import { Ecosystem } from "@/types";
 
 const Index = () => {
   const [ecosystems, setEcosystems] = useState<Ecosystem[]>([]);

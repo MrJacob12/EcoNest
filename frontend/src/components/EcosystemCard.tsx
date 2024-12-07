@@ -43,11 +43,7 @@ export const EcosystemCard = ({
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div className="flex items-center gap-2">
           <Droplets className="h-4 w-4 text-primary" />
-          <span className="text-sm text-gray-600">{volume}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <ThermometerSun className="h-4 w-4 text-primary" />
-          <span className="text-sm text-gray-600">23°C</span>
+          <span className="text-sm text-gray-600">{volume}L</span>
         </div>
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-primary" />

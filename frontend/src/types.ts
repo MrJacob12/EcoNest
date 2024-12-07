@@ -24,6 +24,14 @@ export interface TerrariumStats {
   soilMoisture: string;
 }
 
+export interface Ecosystem {
+  id: string;
+  name: string;
+  type: string;
+  volume: string;
+  lastChecked: string;
+}
+
 export interface EcosystemStats {
   volume: string;
   temperature: string;
