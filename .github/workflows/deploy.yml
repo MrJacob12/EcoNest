@@ -1,14 +1,3 @@
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches:
-      - master
-
-jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -18,9 +7,10 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
+      - name: Clean dependencies and install
         run: |
           cd frontend
+          rm -rf node_modules package-lock.json
           npm install
 
       - name: Build project
