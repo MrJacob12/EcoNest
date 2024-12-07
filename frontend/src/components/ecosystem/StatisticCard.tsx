@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +22,10 @@ export const StatisticCard = ({
   onValueChange,
 }: StatisticCardProps) => {
   return (
-    <Card className="bg-white/50 p-6 rounded-lg border border-gray-100">
+    <Card className={cn(
+        "p-6 cursor-pointer hover:shadow-lg transition-all duration-300 animate-fade-in",
+        "backdrop-blur-sm bg-card/80 border border-gray-200"
+      )}>
       {isEditing ? (
         <>
           <Label className="text-primary-dark font-semibold mb-2">
