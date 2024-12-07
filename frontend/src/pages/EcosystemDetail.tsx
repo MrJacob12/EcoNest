@@ -4,13 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import EcosystemActions from "@/components/ecosystemdetail/EcosystemActions";
 import EcosystemHeader from "@/components/ecosystemdetail/EcosystemHeader";
 import EcosystemStatistics from "@/components/ecosystemdetail/EcosystemStatistics";
-import EcosystemHistoryCharts from "@/components/ecosystemdetail/EcosystemHistoryCharts";
-import {
-  AquariumStats,
-  TerrariumStats,
-  EcosystemStats,
-  EcosystemHistory,
-} from "@/types";
+import { EcosystemStats, EcosystemHistory } from "@/types";
 
 const EcosystemDetail = () => {
   const { id } = useParams();
@@ -38,30 +32,31 @@ const EcosystemDetail = () => {
     if (savedEcosystems) {
       const ecosystems = JSON.parse(savedEcosystems);
       const found = ecosystems.find((eco) => eco.id === id);
-      if (found) {
-        setEcosystem(found);
-        setEditedEcosystem(found);
 
-        if (found.type === "Aquarium") {
+      if (found) {
+        if (!Array.isArray(found.history)) {
+          found.history = [];
+        }
+
+        const latestHistory = found.history.length > 0 ? found.history[found.history.length - 1] : null;
+
+        if (latestHistory) {
+          setEcosystem(found);
+          setEditedEcosystem(found);
+          setEcosystemStats(latestHistory.stats);
+        } else {
+          setEcosystem(found);
+          setEditedEcosystem(found);
           setEcosystemStats({
-            volume: found.volume,
-            temperature: found.temperature,
-            lastChecked: found.lastChecked,
-            ammonia: found.ammonia,
-            nitrate: found.nitrate,
-            nitrite: found.nitrite,
-            hardness: found.hardness,
-            co2: found.co2,
-            humidity: found.humidity,
-          });
-        } else if (found.type === "Terrarium") {
-          setEcosystemStats({
-            volume: found.volume,
-            temperature: found.temperature,
-            lastChecked: found.lastChecked,
-            humidity: found.humidity,
-            light: found.light,
-            soilMoisture: found.soilMoisture,
+            volume: found.volume || "10",
+            temperature: found.temperature || "23",
+            lastChecked: new Date().toLocaleString(),
+            ammonia: found.ammonia || "0",
+            nitrate: found.nitrate || "0",
+            nitrite: found.nitrite || "0",
+            hardness: found.hardness || "0",
+            co2: found.co2 || "0",
+            humidity: found.humidity || "50",
           });
         }
       } else {
@@ -88,13 +83,9 @@ const EcosystemDetail = () => {
       stats: updatedStats,
     };
 
-    const ecosystemHistory = Array.isArray(editedEcosystem.history)
-      ? editedEcosystem.history
-      : [];
-
     const updatedEcosystem = {
       ...editedEcosystem,
-      history: [...ecosystemHistory, updatedHistory],
+      history: editedEcosystem.history ? [...editedEcosystem.history, updatedHistory] : [updatedHistory],
     };
 
     const savedEcosystems = localStorage.getItem("ecosystems");
@@ -138,6 +129,7 @@ const EcosystemDetail = () => {
             }
           }}
         />
+
         <EcosystemHeader
           name={ecosystem.name}
           type={ecosystem.type}
@@ -149,6 +141,7 @@ const EcosystemDetail = () => {
             setEditedEcosystem({ ...editedEcosystem, type })
           }
         />
+
         <EcosystemStatistics
           volume={ecosystemStats.volume}
           temperature={ecosystemStats.temperature}
@@ -164,11 +157,6 @@ const EcosystemDetail = () => {
           onStatChange={handleStatChange}
           isEditing={isEditing}
         />
-
-        {/* <EcosystemHistoryCharts
-          history={ecosystem.history}
-          type={ecosystem.type}
-        /> */}
       </div>
     </div>
   );

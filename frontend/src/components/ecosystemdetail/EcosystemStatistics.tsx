@@ -63,6 +63,16 @@ const EcosystemStatistics = ({
         onValueChange={(value) => onStatChange?.("temperature", value)}
       />
 
+      {/* Humidity */}
+      <StatisticCard
+        icon={<Droplets className="h-5 w-5" />}
+        title="Humidity"
+        suffix="%"
+        value={`${humidity}`}
+        isEditing={isEditing}
+        onValueChange={(value) => onStatChange?.("humidity", value)}
+      />
+
       {/* Ammonia Levels (only for Aquarium) */}
       {ammonia && (
         <StatisticCard
@@ -122,16 +132,6 @@ const EcosystemStatistics = ({
           onValueChange={(value) => onStatChange?.("co2", value)}
         />
       )}
-
-      {/* Humidity */}
-      <StatisticCard
-        icon={<Droplets className="h-5 w-5" />}
-        title="Humidity"
-        suffix="%"
-        value={`${humidity}`}
-        isEditing={isEditing}
-        onValueChange={(value) => onStatChange?.("humidity", value)}
-      />
 
       {/* Light (only for Terrarium) */}
       {light && (
