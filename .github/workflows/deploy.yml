@@ -7,7 +7,6 @@ on:
 
 jobs:
   build-deploy:
-    if: ${{ contains(github.event.head_commit.message, 'build') }}
     runs-on: ubuntu-latest
 
     steps:
@@ -19,11 +18,16 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
+      - name: Clean dependencies and install
         run: |
           cd frontend
           rm -rf node_modules package-lock.json
           npm install --no-optional
+
+      - name: Install Rollup
+        run: |
+          cd frontend
+          npm install --save-dev rollup
 
       - name: Build project
         run: |
