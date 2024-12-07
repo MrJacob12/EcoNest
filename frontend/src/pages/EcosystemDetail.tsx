@@ -154,6 +154,7 @@ const EcosystemDetail = () => {
           humidity={ecosystemStats.humidity}
           light={ecosystemStats.light}
           soilMoisture={ecosystemStats.soilMoisture}
+          type={ecosystem.type}
           onStatChange={handleStatChange}
           isEditing={isEditing}
         />
