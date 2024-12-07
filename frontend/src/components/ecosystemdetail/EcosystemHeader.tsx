@@ -47,10 +47,8 @@ const EcosystemHeader = ({
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent className="bg-background">
-              <SelectItem value="Closed Terrarium">Closed Terrarium</SelectItem>
-              <SelectItem value="Open Terrarium">Open Terrarium</SelectItem>
+              <SelectItem value="Terrarium">Terrarium</SelectItem>
               <SelectItem value="Aquarium">Aquarium</SelectItem>
-              <SelectItem value="Paludarium">Paludarium</SelectItem>
             </SelectContent>
           </Select>
         ) : (
