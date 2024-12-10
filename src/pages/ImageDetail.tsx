@@ -23,8 +23,9 @@ const ImageDetail = () => {
   const [image, setImage] = useState<AquariumImage | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState("");
-  const [title, setTitle] = useState(""); // Nowy stan dla tytułu
+  const [title, setTitle] = useState("");
   const [isAnalyzed, setIsAnalyzed] = useState(false);
+  const [date, setDate] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -34,6 +35,7 @@ const ImageDetail = () => {
           setDescription(foundImage.description);
           setIsAnalyzed(foundImage.analysis || false);
           setTitle(foundImage.title || "");
+          setDate(foundImage.date);
         }
       });
     }
@@ -42,9 +44,9 @@ const ImageDetail = () => {
   const handleSave = () => {
     if (!image) return;
 
-    saveImageToDb({ ...image, description, analysis: isAnalyzed, title })
+    saveImageToDb({ ...image, description, analysis: isAnalyzed, title, date })
       .then(() => {
-        setImage({ ...image, description, analysis: isAnalyzed, title });
+        setImage({ ...image, description, analysis: isAnalyzed, title, date });
         setIsEditing(false);
         toast.success("Changes saved successfully!");
       })
@@ -168,6 +170,15 @@ const ImageDetail = () => {
             {isEditing ? (
               <div className="space-y-2">
                 <div className="space-y-2">
+                  <label className="block text-sm font-semibold">Date</label>
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="w-full p-2 border rounded-md"
+                  />
+                </div>
+                <div className="space-y-2">
                   <label className="block text-sm font-semibold">Title</label>
                   <input
                     type="text"
@@ -202,7 +213,8 @@ const ImageDetail = () => {
                       setIsEditing(false);
                       setDescription(image.description);
                       setIsAnalyzed(image.analysis || false);
-                      setTitle(image.title || ""); // Resetowanie tytułu
+                      setTitle(image.title || "");
+                      setDate(image.date);
                     }}
                   >
                     Cancel

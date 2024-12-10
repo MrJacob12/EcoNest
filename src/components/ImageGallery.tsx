@@ -12,7 +12,12 @@ interface ImageGalleryProps {
   refreshTrigger?: number;
 }
 
-const ImageGallery = ({ onSelect, selectedImage, aquariumId, refreshTrigger }: ImageGalleryProps) => {
+const ImageGallery = ({
+  onSelect,
+  selectedImage,
+  aquariumId,
+  refreshTrigger,
+}: ImageGalleryProps) => {
   const [images, setImages] = useState<AquariumImage[]>([]);
   const [showAll, setShowAll] = useState(false);
 
@@ -35,7 +40,9 @@ const ImageGallery = ({ onSelect, selectedImage, aquariumId, refreshTrigger }: I
     <div className="space-y-4 p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayedImages
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          )
           .map((image, index) => (
             <Card
               key={image.id}
@@ -65,7 +72,9 @@ const ImageGallery = ({ onSelect, selectedImage, aquariumId, refreshTrigger }: I
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Analysis Status</span>
+                    <span className="text-sm text-muted-foreground">
+                      Analysis Status
+                    </span>
                     <div className="flex gap-2">
                       {image.analysis ? (
                         <>
@@ -76,14 +85,16 @@ const ImageGallery = ({ onSelect, selectedImage, aquariumId, refreshTrigger }: I
                           <Leaf className="h-5 w-5 text-green-500 hover:scale-110 transition-transform" />
                         </>
                       ) : (
-                        <span className="text-sm text-muted-foreground">No analysis</span>
+                        <span className="text-sm text-muted-foreground">
+                          No analysis
+                        </span>
                       )}
                     </div>
                   </div>
 
                   <div className="border-t pt-4">
                     <p className="text-sm text-muted-foreground line-clamp-2">
-                      {image.description}
+                      {/* {image.description} */}
                     </p>
                   </div>
                 </div>
