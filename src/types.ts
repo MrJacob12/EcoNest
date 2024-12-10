@@ -5,4 +5,17 @@ export interface AquariumImage {
   date: string;
   description: string;
   analysis?: boolean;
+  aquariumId: string;
+}
+
+export interface AquariumSettings {
+  showTemperature: boolean;
+}
+
+export interface Aquarium {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  settings?: AquariumSettings;
 }

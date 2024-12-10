@@ -6,11 +6,17 @@ import { saveImageToDb } from "@/utils/indexedDB";
 
 interface ImageUploadProps {
   onUpload: (image: AquariumImage) => void;
+  aquariumId: string;
 }
 
-const ImageUpload = ({ onUpload }: ImageUploadProps) => {
+const ImageUpload = ({ onUpload, aquariumId }: ImageUploadProps) => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      if (!aquariumId) {
+        toast.error("Please select an aquarium first");
+        return;
+      }
+
       acceptedFiles.forEach((file) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -19,20 +25,23 @@ const ImageUpload = ({ onUpload }: ImageUploadProps) => {
             url: reader.result as string,
             date: new Date().toISOString().split("T")[0],
             description: "",
+            aquariumId: aquariumId,
           };
 
-          // Zapisz obraz w IndexedDB
           saveImageToDb(newImage)
             .then(() => {
-              onUpload(newImage); // Przekaż obraz do rodzica
+              onUpload(newImage);
               toast.success("Image uploaded successfully!");
             })
-            .catch(() => toast.error("Failed to save image"));
+            .catch((error) => {
+              console.error("Error saving image:", error);
+              toast.error("Failed to save image");
+            });
         };
         reader.readAsDataURL(file);
       });
     },
-    [onUpload]
+    [onUpload, aquariumId]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

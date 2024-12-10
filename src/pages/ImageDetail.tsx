@@ -27,14 +27,13 @@ const ImageDetail = () => {
   const [isAnalyzed, setIsAnalyzed] = useState(false);
 
   useEffect(() => {
-    // Odczytanie obrazu z IndexedDB
     if (id) {
       getImageFromDb(id).then((foundImage) => {
         if (foundImage) {
           setImage(foundImage);
           setDescription(foundImage.description);
           setIsAnalyzed(foundImage.analysis || false);
-          setTitle(foundImage.title || ""); // Ustawienie tytułu
+          setTitle(foundImage.title || "");
         }
       });
     }
@@ -43,7 +42,6 @@ const ImageDetail = () => {
   const handleSave = () => {
     if (!image) return;
 
-    // Zapisz zaktualizowane dane do IndexedDB
     saveImageToDb({ ...image, description, analysis: isAnalyzed, title })
       .then(() => {
         setImage({ ...image, description, analysis: isAnalyzed, title });
