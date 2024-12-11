@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ImageDetail from "./pages/ImageDetail";
+import AquariumManager from "./pages/AquariumManager";
+import AquariumSelector from "./pages/AquariumSelector";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +17,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<AquariumSelector />} />
+          <Route path="/aquarium/:id" element={<AquariumManager />} />
           <Route path="/image/:id" element={<ImageDetail />} />
         </Routes>
       </BrowserRouter>

@@ -60,21 +60,48 @@ export const getImageFromDb = (
   });
 };
 
-export const exportDataToDb = async () => {
-  const db = await openDb();
-  const transaction = db.transaction(STORE_NAME, "readonly");
-  const store = transaction.objectStore(STORE_NAME);
-  const request = store.getAll();
-  return new Promise<any[]>((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = (error) => reject(error);
-  });
-};
-
-export const importDataFromDb = async (data: string) => {
+export const clearImagesFromDb = async () => {
   const db = await openDb();
   const transaction = db.transaction(STORE_NAME, "readwrite");
   const store = transaction.objectStore(STORE_NAME);
-  const parsedData = JSON.parse(data);
-  parsedData.forEach((item: any) => store.put(item));
+  store.clear();
+
+  return new Promise<void>((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(new Error("Failed to clear images"));
+  });
+};
+
+export const exportDataToDb = async () => {
+  const images = await getAllImagesFromDb();
+  const aquariums = localStorage.getItem("aquariums");
+  
+  return {
+    images,
+    aquariums: aquariums ? JSON.parse(aquariums) : []
+  };
+};
+
+export const importDataFromDb = async (jsonData: string) => {
+  try {
+    const data = JSON.parse(jsonData);
+    
+    // Clear existing data
+    await clearImagesFromDb();
+    
+    // Import images to IndexedDB
+    if (data.images && Array.isArray(data.images)) {
+      for (const image of data.images) {
+        await saveImageToDb(image);
+      }
+    }
+    
+    // Import aquariums to localStorage
+    if (data.aquariums && Array.isArray(data.aquariums)) {
+      localStorage.setItem("aquariums", JSON.stringify(data.aquariums));
+    }
+  } catch (error) {
+    console.error("Error importing data:", error);
+    throw new Error("Failed to import data");
+  }
 };
