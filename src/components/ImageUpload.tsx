@@ -1,12 +1,20 @@
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { AquariumImage } from "@/types";
+import { AquariumImage, GlobalSettings } from "@/types";
 import { toast } from "sonner";
 import { saveImageToDb } from "@/utils/indexedDB";
 
 interface ImageUploadProps {
   onUpload: (image: AquariumImage) => void;
   aquariumId: string;
+}
+
+const SETTINGS_KEY = "global_settings";
+
+interface DiscordResponse {
+  attachments?: Array<{
+    proxy_url?: string;
+  }>;
 }
 
 const ImageUpload = ({ onUpload, aquariumId }: ImageUploadProps) => {
@@ -16,6 +24,9 @@ const ImageUpload = ({ onUpload, aquariumId }: ImageUploadProps) => {
         toast.error("Please select an aquarium first");
         return;
       }
+
+      const settings = localStorage.getItem(SETTINGS_KEY);
+      const webhookUrl = settings ? JSON.parse(settings).webhookUrl : null;
 
       acceptedFiles.forEach((file) => {
         const reader = new FileReader();
@@ -28,15 +39,59 @@ const ImageUpload = ({ onUpload, aquariumId }: ImageUploadProps) => {
             aquariumId: aquariumId,
           };
 
-          saveImageToDb(newImage)
-            .then(() => {
-              onUpload(newImage);
-              toast.success("Image uploaded successfully!");
+          // If webhook is configured, try to get proxy URL first
+          if (webhookUrl) {
+            const formData = new FormData();
+            formData.append(
+              "payload_json",
+              JSON.stringify({
+                content: `New aquarium image uploaded on ${newImage.date}`,
+              })
+            );
+            formData.append("file", file);
+
+            fetch(webhookUrl, {
+              method: "POST",
+              body: formData,
             })
-            .catch((error) => {
-              console.error("Error saving image:", error);
-              toast.error("Failed to save image");
-            });
+              .then((response) => response.json())
+              .then((data: DiscordResponse) => {
+                // If we got a proxy URL from Discord, use it instead
+                if (data.attachments?.[0]?.proxy_url) {
+                  newImage.url = data.attachments[0].proxy_url;
+                  toast.success("Using Discord CDN for image storage");
+                }
+                return saveImageToDb(newImage);
+              })
+              .then(() => {
+                onUpload(newImage);
+                toast.success("Image uploaded successfully!");
+              })
+              .catch((error) => {
+                console.error("Error with webhook or saving:", error);
+                // If webhook fails, fallback to local storage
+                saveImageToDb(newImage)
+                  .then(() => {
+                    onUpload(newImage);
+                    toast.success("Image uploaded successfully (local storage)!");
+                  })
+                  .catch((err) => {
+                    console.error("Error saving image:", err);
+                    toast.error("Failed to save image");
+                  });
+              });
+          } else {
+            // No webhook configured, save locally
+            saveImageToDb(newImage)
+              .then(() => {
+                onUpload(newImage);
+                toast.success("Image uploaded successfully!");
+              })
+              .catch((error) => {
+                console.error("Error saving image:", error);
+                toast.error("Failed to save image");
+              });
+          }
         };
         reader.readAsDataURL(file);
       });

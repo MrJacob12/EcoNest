@@ -7,10 +7,26 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Settings } from "lucide-react";
 import { toast } from "sonner";
 import { exportDataToDb, importDataFromDb } from "@/utils/indexedDB";
+import { useState, useEffect } from "react";
+import { GlobalSettings } from "@/types";
+
+const SETTINGS_KEY = "global_settings";
+
 const SettingsModal = () => {
+  const [webhookUrl, setWebhookUrl] = useState("");
+
+  useEffect(() => {
+    const settings = localStorage.getItem(SETTINGS_KEY);
+    if (settings) {
+      const parsed: GlobalSettings = JSON.parse(settings);
+      setWebhookUrl(parsed.webhookUrl || "");
+    }
+  }, []);
+
   const handleExportData = () => {
     exportDataToDb()
       .then((data) => {
@@ -55,6 +71,12 @@ const SettingsModal = () => {
     }
   };
 
+  const handleSaveWebhook = () => {
+    const settings: GlobalSettings = { webhookUrl };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    toast.success("Webhook URL saved successfully!");
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -72,7 +94,19 @@ const SettingsModal = () => {
         </DialogHeader>
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Data Management</label>
+            <Label>Webhook URL</Label>
+            <div className="flex gap-2">
+              <Input
+                type="url"
+                placeholder="Enter webhook URL"
+                value={webhookUrl}
+                onChange={(e) => setWebhookUrl(e.target.value)}
+              />
+              <Button onClick={handleSaveWebhook}>Save</Button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Data Management</Label>
             <div className="flex gap-2">
               <Button onClick={handleExportData} className="flex-1">
                 Export Data

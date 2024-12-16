@@ -19,3 +19,7 @@ export interface Aquarium {
   createdAt: string;
   settings?: AquariumSettings;
 }
+
+export interface GlobalSettings {
+  webhookUrl?: string;
+}
