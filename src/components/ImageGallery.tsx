@@ -57,15 +57,17 @@ const ImageGallery = ({
       // Get all images
       const allImages = await getAllImagesFromDb();
       // Filter out the deleted image
-      const updatedImages = allImages.filter(img => img.id !== imageToDelete.id);
-      
+      const updatedImages = allImages.filter(
+        (img) => img.id !== imageToDelete.id
+      );
+
       // Save the updated list back to IndexedDB
       for (const img of updatedImages) {
         await saveImageToDb(img);
       }
-      
+
       // Update local state
-      setImages(prev => prev.filter(img => img.id !== imageToDelete.id));
+      setImages((prev) => prev.filter((img) => img.id !== imageToDelete.id));
       toast.success("Image deleted successfully");
     } catch (error) {
       console.error("Error deleting image:", error);
@@ -76,16 +78,18 @@ const ImageGallery = ({
   const displayedImages = showAll ? images : images.slice(0, VISIBLE_COUNT);
 
   const handleSelectForAnalysis = (image: AquariumImage, selected: boolean) => {
-    setSelectedForAnalysis(prev => 
-      selected 
-        ? [...prev, image.id]
-        : prev.filter(id => id !== image.id)
+    setSelectedForAnalysis((prev) =>
+      selected ? [...prev, image.id] : prev.filter((id) => id !== image.id)
     );
   };
 
   const generateBatchAnalysisPrompt = () => {
-    const selectedImages = images.filter(img => selectedForAnalysis.includes(img.id));
-    const prompt = `I will now share ${selectedImages.length} aquarium images for analysis. Please analyze each image focusing on:
+    const selectedImages = images.filter((img) =>
+      selectedForAnalysis.includes(img.id)
+    );
+    const prompt = `I will now share ${
+      selectedImages.length
+    } aquarium images for analysis. Please analyze each image focusing on:
 1. Water clarity and quality
 2. Plant health and growth
 3. Overall aquarium condition
@@ -98,7 +102,7 @@ Please analyze these images in chronological order:
 ${selectedImages
   .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
   .map((img, index) => `Image ${index + 1} - Date: ${img.date}`)
-  .join('\n')}`;
+  .join("\n")}`;
 
     return prompt;
   };
@@ -123,7 +127,7 @@ ${selectedImages
           >
             {isAnalysisMode ? "Cancel Selection" : "Select for Analysis"}
           </Button>
-          
+
           {isAnalysisMode && selectedForAnalysis.length > 0 && (
             <Dialog>
               <DialogTrigger asChild>
@@ -144,10 +148,29 @@ ${selectedImages
                       <h3>Steps:</h3>
                       <ol>
                         <li>Copy the generated prompt below</li>
-                        <li>Visit <a href="https://chat.openai.com" target="_blank" className="text-primary hover:underline">ChatGPT</a> or <a href="https://copilot.microsoft.com" target="_blank" className="text-primary hover:underline">Microsoft Copilot</a></li>
+                        <li>
+                          Visit{" "}
+                          <a
+                            href="https://chat.openai.com"
+                            target="_blank"
+                            className="text-primary hover:underline"
+                          >
+                            ChatGPT
+                          </a>{" "}
+                          or{" "}
+                          <a
+                            href="https://copilot.microsoft.com"
+                            target="_blank"
+                            className="text-primary hover:underline"
+                          >
+                            Microsoft Copilot
+                          </a>
+                        </li>
                         <li>Upload all selected images</li>
                         <li>Paste the prompt</li>
-                        <li>Copy the analysis back to each image's details page</li>
+                        <li>
+                          Copy the analysis back to each image's details page
+                        </li>
                       </ol>
                     </div>
                     <div className="relative">
@@ -186,7 +209,7 @@ ${selectedImages
           />
         ))}
       </div>
-      
+
       <ShowMoreButton
         totalImages={images.length}
         showAll={showAll}

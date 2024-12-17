@@ -27,10 +27,10 @@ interface ImageCardProps {
   onDelete?: (image: AquariumImage) => void;
 }
 
-const ImageCard = ({ 
-  image, 
-  isSelected, 
-  onClick, 
+const ImageCard = ({
+  image,
+  isSelected,
+  onClick,
   index,
   onSelectForAnalysis,
   isSelectedForAnalysis,
@@ -51,14 +51,14 @@ const ImageCard = ({
       onClick={() => onClick(image)}
     >
       {showAnalysisSelection && (
-        <div 
-          className="absolute top-3 right-3 z-10"
+        <div
+          className="absolute top-3 left-3 z-10"
           onClick={(e) => {
             e.stopPropagation();
             onSelectForAnalysis?.(image, !isSelectedForAnalysis);
           }}
         >
-          <div className="bg-white/90 backdrop-blur-sm rounded-lg p-1.5 shadow-md hover:bg-white transition-colors duration-200">
+          <div className="bg-white/90 backdrop-blur-sm rounded-lg p-1.5 shadow-md hover:bg-white transition-colors duration-200 flex">
             <Checkbox
               checked={isSelectedForAnalysis}
               className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
@@ -94,12 +94,15 @@ const ImageCard = ({
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete Image</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete this image? This action cannot be undone.
+                  Are you sure you want to delete this image? This action cannot
+                  be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete}>
+                  Delete
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -113,7 +116,9 @@ const ImageCard = ({
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Analysis Status</span>
+            <span className="text-sm text-muted-foreground">
+              Analysis Status
+            </span>
             <div className="flex gap-2">
               {image.analysis ? (
                 <>
@@ -124,7 +129,9 @@ const ImageCard = ({
                   <Leaf className="h-5 w-5 text-green-500 hover:scale-110 transition-transform" />
                 </>
               ) : (
-                <span className="text-sm text-muted-foreground">No analysis</span>
+                <span className="text-sm text-muted-foreground">
+                  No analysis
+                </span>
               )}
             </div>
           </div>
